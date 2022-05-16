@@ -29,9 +29,9 @@ const generatePayloadByPost = (post: string) => ({
 });
 
 // https://stamp.family.com.tw/api/cherishfood/CherishFoods
-export const classification = friend.get("/Classification");
+export const fetchClassification = friend.get("/Classification");
 
-export const getInfoByKeys = (...keys: string[]) =>
+export const fetchInfoByKeys = (...keys: string[]) =>
   friend.post("/CherishFoods", generatePayloadByKeys(...keys));
-export const getInfoByPost = (post: string) =>
+export const fetchInfoByPost = (post: string) =>
   friend.post("/CherishFoods", generatePayloadByPost(post));

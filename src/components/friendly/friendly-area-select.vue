@@ -12,8 +12,24 @@
     </ul>
     <div class="w-1/2">
       <ul class="" v-if="selectedCityIndex !== -1">
+        <li>
+          <router-link
+            class="inline-block w-full hover:bg-yellow-50"
+            :to="{
+              name: 'friendly-area',
+              params: { area: CityList[selectedCityIndex].name },
+            }"
+          >
+            不限
+          </router-link>
+        </li>
         <li class="" v-for="area in CityList[selectedCityIndex].districts">
-          {{ area.name }}
+          <router-link
+            class="inline-block w-full hover:bg-yellow-50"
+            :to="{ name: 'friendly-area', params: { area: area.name } }"
+          >
+            {{ area.name }}
+          </router-link>
         </li>
       </ul>
     </div>
