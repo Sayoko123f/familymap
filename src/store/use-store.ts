@@ -8,68 +8,74 @@ export const useStore = defineStore('store', {
         cache: <Cache>{
             post: {},
             oldP: {},
+            map: {},
         },
     }),
     actions: {
         async fetchClassification() {
             if (!('classification' in this.cache)) {
+                console.log('fetch classification.');
                 this.cache.classification = await apiFake.fetchClassification();
+                this.genarateClassificationMap();
             }
-            return this.cache.classification;
+            return;
         },
         async fetchDataByPost(cityname: string) {
             if (!(cityname in this.cache.post)) {
+                await this.fetchClassification();
                 this.cache.post[cityname] = await apiFake.fetchInfoByPost(cityname);
+                for (const shop of this.cache.post[cityname].data) {
+                    this.transformShopInfo(shop);
+                }
             }
             return this.cache.post[cityname];
         },
         async fetchDataByKey(...oldPKey: string[]) {
             for (const key of oldPKey) {
+                await this.fetchClassification();
                 if (!(key in this.cache.oldP)) {
                     const res = await apiFake.fetchInfoByKeys(...oldPKey);
+                    console.log(res);
                     for (const item of res.data) {
-                        this.cache.oldP[item.oldPKey] = item;
+                        this.cache.oldP[item.oldPKey] = this.transformShopInfo(item);
                     }
                 }
             }
             return this.cache.oldP;
         },
-        async transformShopInfo(s: ShopData) {
+        transformShopInfo(s: ShopData) {
             const info = s.info;
-            const cf = (await this.fetchClassification()).data;
-            for (let group = 0; group < info.length; group++) {
-                const groupCode = info[group].code;
-                const groupIndex = cf.findIndex((e) => e.groupCode === groupCode);
-                info[group].groupName = cf[groupIndex].groupName;
-                for (
-                    let category = 0;
-                    category < info[group].categories.length;
-                    category++
-                ) {
-                    const categoryCode = info[group].categories[category].code;
-                    const categoryIndex = cf[groupIndex].categories.findIndex(
-                        (c) => c.categoryCode === categoryCode
-                    );
-                    info[group].categories[category].categoryName =
-                        cf[groupIndex].categories[categoryIndex].categoryName;
-                    for (
-                        let product = 0;
-                        product < info[group].categories[category].products.length;
-                        product++
-                    ) {
-                        const productCode =
-                            info[group].categories[category].products[product].code;
-                        const productIndex = cf[groupIndex].categories[
-                            categoryIndex
-                        ].products.findIndex((p) => p.productCode === productCode);
-                        info[group].categories[category].products[product].productName =
-                            cf[groupIndex].categories[categoryIndex].products[
-                                productIndex
-                            ].productName;
+            const m = this.cache.map;
+            for (const group of info) {
+                group.groupName = m.group.get(group.code);
+                for (const category of group.categories) {
+                    category.categoryName = m.category.get(category.code);
+                    for (const product of category.products) {
+                        product.productName = m.category.get(product.code);
                     }
                 }
             }
-            return info;
+            return s;
+        },
+        genarateClassificationMap() {
+            const cf = this.cache.classification.data;
+            const groupMap = new Map<string, string>();
+            const categoryMap = new Map<string, string>();
+            const productMap = new Map<string, string>();
+            for (let i = 0; i < cf.length; i++) {
+                groupMap.set(cf[i].groupCode, cf[i].groupName);
+                for (let j = 0; j < cf[i].categories.length; j++) {
+                    const category = cf[i].categories[j];
+                    categoryMap.set(category.categoryCode, category.categoryName);
+                    for (let k = 0; k < category.products.length; k++) {
+                        const product = category.products[k];
+                        productMap.set(product.productCode, product.productName);
+                    }
+                }
+            }
+            this.cache.map.group = groupMap;
+            this.cache.map.category = categoryMap;
+            this.cache.map.product = productMap;
         },
     },
 });

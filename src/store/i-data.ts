@@ -45,4 +45,9 @@ export interface Cache {
     oldP: {
         [key: string]: ShopData;
     };
+    map: {
+        group: Map<string, string>;
+        category: Map<string, string>;
+        product: Map<string, string>;
+    };
 }

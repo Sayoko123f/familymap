@@ -4,7 +4,13 @@
         <h2>{{ area }}</h2>
         <div class="" v-if="!isLoading">
             <div class="" v-for="shop in store.cache.post[area].data">
-                <p>{{ shop.name }}</p>
+                <p>
+                    <router-link
+                        :to="{ name: 'friendly-post', params: { post: shop.oldPKey } }"
+                        >{{ shop.name }}</router-link
+                    >
+                </p>
+                <CommodityGroup :shop="shop" />
             </div>
         </div>
     </div>
@@ -14,6 +20,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from '../../store/use-store';
 import OverlayScreen from '../overlay-screen.vue';
+import CommodityGroup from './commodity-group.vue';
 const route = useRoute();
 const store = useStore();
 const isLoading = ref(true);
@@ -26,9 +33,9 @@ function wait(ms: number) {
 }
 
 onMounted(async () => {
-    await wait(300);
+    // await wait(300);
     try {
-        await Promise.all([store.fetchClassification(), store.fetchDataByPost(area)]);
+        await store.fetchDataByPost(area);
     } catch (err) {
         console.error(err);
         console.error('獲取資料失敗，請稍後再試');
