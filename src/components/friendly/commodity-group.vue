@@ -1,14 +1,16 @@
 <template>
-    <div class="grid grid-cols-4 gap-2 bg-[#F5F5F5]">
+    <div class="grid grid-cols-4 gap-2 bg-[#F5F5F5] p-4">
         <div
-            class="flex flex-col items-center justify-center border"
+            class="flex flex-col items-center justify-center border py-2"
             :class="{
                 'opacity-40': group.qty === 0,
                 'border-transparent': group.qty === 0,
                 'border-white': group.qty > 0,
+                'cursor-pointer': group.qty > 0,
             }"
             v-for="group in shop.info"
             :key="group.code"
+            @click="() => handleGroupDivClick(group)"
         >
             <div class="">
                 <img
@@ -26,7 +28,10 @@
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { ShopData } from '../../store/i-data';
+import { iconSrc } from '../../assets/group-icon';
+const router = useRouter();
 
 const prop = defineProps({
     shop: {
@@ -35,14 +40,15 @@ const prop = defineProps({
     },
 });
 const shop = computed(() => prop.shop as ShopData);
-const iconSrc = {
-    A: '/imgs/g1.svg',
-    B: '/imgs/g2.svg',
-    C: '/imgs/g3.svg',
-    D: '/imgs/g4.svg',
-    E: '/imgs/g5.svg',
-    F: '/imgs/g6.svg',
-    G: '/imgs/g7.svg',
-    H: '/imgs/g8.svg',
-};
+
+function handleGroupDivClick(group: ShopData['info'][0]) {
+    if (group.qty < 1) {
+        return;
+    }
+    router.push({
+        name: 'friendly-post',
+        params: { post: shop.value.oldPKey },
+        query: { group: group.code },
+    });
+}
 </script>
