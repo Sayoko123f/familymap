@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        noto: ['"Noto Sans TC"', "sans-serif"],
+        noto: `"Noto Sans TC", 微軟正黑體, "Microsoft JhengHei", "PingFang TC", sans-serif`,
       },
       colors: {
         friend: {
