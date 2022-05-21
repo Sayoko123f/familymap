@@ -34,19 +34,21 @@
             <div class="">
                 <div class="" v-for="group in showGroups" :key="group.code">
                     <div class="" v-for="category in group.categories" :key="category.code">
-                        <p class="text-sm text-friend-gray pt-3 pl-6">
+                        <p class="pt-3 pl-6 text-sm text-friend-gray">
                             {{ category.categoryName }}
                         </p>
                         <div class="divide-y divide-friend-gray divide-opacity-40">
                             <div
-                                class="flex justify-between mx-8 py-2"
+                                class="mx-8 flex justify-between py-2"
                                 v-for="product in category.products"
                                 :key="product.code"
                             >
                                 <span>
                                     {{ product.productName }}
                                 </span>
-                                <span class="text-friend-primary font-bold">{{ product.qty }}</span>
+                                <span class="font-bold text-friend-primary">{{
+                                    product.qty
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -70,7 +72,7 @@ const isLoading = ref(true);
 const oldPKey = route.params.post as string;
 const showGroups = computed(() => {
     const g = route.query.group?.toString();
-    if (!g || g === 'all') {
+    if (!g) {
         return shop.value.info;
     }
     return shop.value.info.filter((e) => e.code === g);
@@ -93,10 +95,8 @@ async function handleGroupDivClick(group: ShopData['info'][0]) {
     if (group.qty < 1) {
         return;
     }
-    let queryGroup = group.code;
-    if (route.query.group === group.code) {
-        queryGroup = 'all';
-    }
+    const queryGroup = route.query.group === group.code ? undefined : group.code;
+
     await router.replace({
         name: 'friendly-post',
         params: { post: oldPKey },
