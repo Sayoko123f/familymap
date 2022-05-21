@@ -51,7 +51,7 @@ export const useStore = defineStore('store', {
                 for (const category of group.categories) {
                     category.categoryName = m.category.get(category.code);
                     for (const product of category.products) {
-                        product.productName = m.category.get(product.code);
+                        product.productName = m.product.get(product.code);
                     }
                 }
             }
