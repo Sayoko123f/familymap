@@ -2,14 +2,22 @@
     <div class="bg-white">
         <OverlayScreen :loading="true" v-if="isLoading" />
         <div class="" v-if="!isLoading">
-            <div class="grid grid-cols-4 gap-2 bg-[#F5F5F5] p-4">
+            <div class="flex items-center justify-between px-4 pt-2">
+                <span class="text-lg">{{ shop.name }}</span>
+                <FavoriteButton :old-p-key="shop.oldPKey" />
+            </div>
+            <p class="px-4 text-sm text-[#666666]">{{ shop.address }}</p>
+            <p class="px-4 pb-2 text-sm text-[#666666]">最後更新於 {{ finialUpdate }}</p>
+            <div class="grid grid-cols-4 gap-2 bg-white p-4 shadow-[inset_0_-1px_1px_#c4c4c4]">
                 <div
-                    class="flex flex-col items-center justify-center border py-2"
+                    class="flex flex-col items-center justify-center border-2 py-2 rounded-lg"
                     :class="{
                         'opacity-40': group.qty === 0,
-                        'border-transparent': group.qty === 0,
-                        'border-white': group.qty > 0,
                         'cursor-pointer': group.qty > 0,
+                        'bg-[#dddddd]': route.query.group === group.code,
+                        'border-[#c4c4c4]': route.query.group === group.code,
+                        'border-transparent':
+                            group.qty === 0 || route.query.group !== group.code,
                     }"
                     v-for="group in shop.info"
                     :key="group.code"
@@ -64,6 +72,7 @@ import { useStore } from '../../store/use-store';
 import { ShopData } from '../../store/i-data';
 import OverlayScreen from '../overlay-screen.vue';
 import { iconSrc } from '../../assets/group-icon';
+import FavoriteButton from './favorite-button.vue';
 
 const store = useStore();
 const router = useRouter();
@@ -78,6 +87,7 @@ const showGroups = computed(() => {
     return shop.value.info.filter((e) => e.code === g);
 });
 const shop = computed(() => store.cache.oldP[oldPKey]);
+const finialUpdate = computed(() => new Date(shop.value.updateDate).toLocaleString());
 onMounted(async () => {
     try {
         if (!((oldPKey as string) in store.cache.post)) {

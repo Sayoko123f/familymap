@@ -4,11 +4,11 @@ import {
     RouteRecordRaw,
     RouterScrollBehavior,
 } from 'vue-router';
-import Hello from './components/HelloWorld.vue';
 import FriendlyHome from './components/friendly/friendly-home.vue';
 import FriendlyAreaSelect from './components/friendly/friendly-area-select.vue';
 import FriendlyArea from './components/friendly/friendly-area.vue';
 import ShopPannel from './components/friendly/shop-pannel.vue';
+import FavoritePannel from './components/friendly/favorite-pannel.vue';
 
 const routes = [
     { name: 'home', path: '/', redirect: '/friendly' },
@@ -24,6 +24,7 @@ const routes = [
             },
             { name: 'friendly-area', path: 'a/:area', component: FriendlyArea },
             { name: 'friendly-post', path: 'p/:post', component: ShopPannel },
+            { name: 'friendly-favorite', path: 'favorite', component: FavoritePannel },
         ],
     },
 ] as RouteRecordRaw[];
