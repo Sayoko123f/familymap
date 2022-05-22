@@ -10,6 +10,11 @@ export const useStore = defineStore('store', {
             oldP: {},
             map: {},
         },
+        favorite: {
+            friendly: JSON.parse(
+                localStorage.getItem('friendly-favorite') || '[]'
+            ) as string[],
+        },
     }),
     actions: {
         async fetchClassification() {
@@ -31,8 +36,8 @@ export const useStore = defineStore('store', {
             return this.cache.post[cityname];
         },
         async fetchDataByKey(...oldPKey: string[]) {
+            await this.fetchClassification();
             for (const key of oldPKey) {
-                await this.fetchClassification();
                 if (!(key in this.cache.oldP)) {
                     const res = await apiFake.fetchInfoByKeys(...oldPKey);
                     console.log(res);
@@ -76,6 +81,28 @@ export const useStore = defineStore('store', {
             this.cache.map.group = groupMap;
             this.cache.map.category = categoryMap;
             this.cache.map.product = productMap;
+        },
+        addFavorite(oldPKey: string) {
+            this.favorite.friendly.push(oldPKey);
+            localStorage.setItem(
+                'friendly-favorite',
+                JSON.stringify(this.favorite.friendly)
+            );
+        },
+        removeFavorite(oldPKey: string) {
+            const index = this.favorite.friendly.findIndex((e) => e === oldPKey);
+            if (index === -1) {
+                return;
+            }
+            this.favorite.friendly.splice(index, 1);
+            localStorage.setItem(
+                'friendly-favorite',
+                JSON.stringify(this.favorite.friendly)
+            );
+        },
+        async fetchFavoriteShopData() {
+            await this.fetchClassification();
+            await this.fetchDataByKey(...this.favorite.friendly);
         },
     },
 });
