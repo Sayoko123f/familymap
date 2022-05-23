@@ -29,7 +29,7 @@
                 <li class="" v-for="area in CityList[selectedCityIndex].districts">
                     <router-link
                         class="inline-block w-full hover:bg-yellow-50"
-                        :to="{ name: 'friendly-area', params: { area: area.name } }"
+                        :to="{ name: 'friendly-area', params: { area: area.code } }"
                     >
                         {{ area.name }}
                     </router-link>

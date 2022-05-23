@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { Cache, ShopData } from './i-data';
 import * as api from './api-friend';
-import * as apiFake from './api-friend-fake';
 
 export const useStore = defineStore('store', {
     state: () => ({
@@ -20,7 +19,7 @@ export const useStore = defineStore('store', {
         async fetchClassification() {
             if (!('classification' in this.cache)) {
                 console.log('fetch classification.');
-                this.cache.classification = await apiFake.fetchClassification();
+                this.cache.classification = (await api.fetchClassification()).data;
                 this.genarateClassificationMap();
             }
             return;
@@ -28,7 +27,7 @@ export const useStore = defineStore('store', {
         async fetchDataByPost(cityname: string) {
             if (!(cityname in this.cache.post)) {
                 await this.fetchClassification();
-                this.cache.post[cityname] = await apiFake.fetchInfoByPost(cityname);
+                this.cache.post[cityname] = (await api.fetchInfoByPost(cityname)).data;
                 for (const shop of this.cache.post[cityname].data) {
                     this.transformShopInfo(shop);
                 }
@@ -39,9 +38,9 @@ export const useStore = defineStore('store', {
             await this.fetchClassification();
             for (const key of oldPKey) {
                 if (!(key in this.cache.oldP)) {
-                    const res = await apiFake.fetchInfoByKeys(...oldPKey);
+                    const res = await api.fetchInfoByKeys(...oldPKey);
                     console.log(res);
-                    for (const item of res.data) {
+                    for (const item of res.data.data) {
                         this.cache.oldP[item.oldPKey] = this.transformShopInfo(item);
                     }
                 }
@@ -49,6 +48,8 @@ export const useStore = defineStore('store', {
             return this.cache.oldP;
         },
         transformShopInfo(s: ShopData) {
+            console.log(s);
+
             const info = s.info;
             const m = this.cache.map;
             for (const group of info) {

@@ -26,7 +26,6 @@ onMounted(async () => {
         console.error(err);
         console.error('獲取資料失敗，請稍後再試');
     } finally {
-        console.log(store.cache.post[area]);
         isLoading.value = false;
     }
 });

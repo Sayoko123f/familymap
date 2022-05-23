@@ -12,21 +12,13 @@
         <div class="text-lg font-bold">
             <router-link :to="{ name: 'friendly-home' }"> 友善食光 </router-link>
         </div>
-        <div>
-            <router-link
-                :to="{ name: 'friendly-favorite' }"
-                class="cursor-pointer hover:text-friend-primary"
-            >
-                已收藏
-                <HeartIcon class="inline-block h-6 w-6 align-text-bottom" />
-            </router-link>
-        </div>
+        <div></div>
     </header>
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ChevronLeftIcon, HeartIcon } from '@heroicons/vue/solid';
+import { ChevronLeftIcon } from '@heroicons/vue/solid';
 
 const router = useRouter();
 const route = useRoute();
