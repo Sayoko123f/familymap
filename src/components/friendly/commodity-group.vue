@@ -38,10 +38,14 @@ const prop = defineProps({
         type: Object,
         required: true,
     },
+    noRoute: Boolean,
 });
 const shop = computed(() => prop.shop as ShopData);
 
 function handleGroupDivClick(group: ShopData['info'][0]) {
+    if (prop.noRoute) {
+        return;
+    }
     if (group.qty < 1) {
         return;
     }
