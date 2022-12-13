@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ShopData, Cache } from './i-data';
 
 const friend = axios.create({
-    baseURL: 'https://stamp.family.com.tw/api/cherishfood/',
+    baseURL: 'https://stamp.family.com.tw/api/maps/',
 });
 
 /**
@@ -15,6 +15,7 @@ const generatePayloadByKeys = (...keys: string[]) => ({
     PostInfo: '',
     Latitude: 0,
     Longitude: 0,
+    ProjectCode: '202106302',
 });
 
 /**
@@ -27,12 +28,13 @@ const generatePayloadByPost = (post: string) => ({
     PostInfo: post,
     Latitude: 0,
     Longitude: 0,
+    ProjectCode: '202106302',
 });
 
-// https://stamp.family.com.tw/api/cherishfood/CherishFoods
-export const fetchClassification = () => friend.get('/Classification');
+export const fetchClassification = () =>
+    friend.get('/MapClassificationInfo?ProjectCode=202106302');
 
 export const fetchInfoByKeys = (...keys: string[]) =>
-    friend.post('/CherishFoods', generatePayloadByKeys(...keys));
+    friend.post('/MapProductInfo', generatePayloadByKeys(...keys));
 export const fetchInfoByPost = (post: string) =>
-    friend.post('/CherishFoods', generatePayloadByPost(post));
+    friend.post('/MapProductInfo', generatePayloadByPost(post));
